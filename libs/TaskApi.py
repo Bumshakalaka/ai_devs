@@ -35,6 +35,14 @@ class TaskApi:
         logger.info(response.json())
         return response.json()
 
+    def task_question(self, question) -> Dict:
+        if self._token is None:
+            logger.error("Do auth first")
+        url = f"{self._base_url}/task/{self._token}"
+        response = requests.post(url, data=dict(question=question))
+        logger.info(response.json())
+        return response.json()
+
     def answer(self, answer) -> bool:
         if self._token is None:
             logger.error("Do auth first")
