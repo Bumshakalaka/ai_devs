@@ -1,26 +1,23 @@
-import asyncio
 import os
 
 from dotenv import load_dotenv, find_dotenv
-from langchain.chains import LLMChain
-from langchain_core.callbacks import StdOutCallbackHandler
-from langchain_core.prompts import PromptTemplate
-from langchain_openai import OpenAI
+from langchain.chat_models.openai import ChatOpenAI
+from langchain.schema import HumanMessage
+from langchain_core.callbacks import BaseCallbackHandler
 
 load_dotenv(find_dotenv())
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-handler = StdOutCallbackHandler()
-llm = OpenAI()
-chain = LLMChain(
-    llm=llm, prompt=PromptTemplate.from_template("Hi there"), callbacks=[handler]
+
+class MyCustomHandler(BaseCallbackHandler):
+    def on_llm_new_token(self, token: str, **kwargs) -> None:
+        print(f"My custom handler, token: {token}")
+
+
+chat = ChatOpenAI(streaming=True, callbacks=[MyCustomHandler()])
+
+chat.invoke(
+    [
+        HumanMessage("Hey there!"),
+    ]
 )
-
-
-# Definicja funkcji asynchronicznej do wykonania chatu
-async def main():
-    await chain.ainvoke({})
-
-
-# Uruchomienie funkcji asynchronicznej w pętli zdarzeń
-asyncio.run(main())

@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv, find_dotenv
 from langchain.prompts import ChatPromptTemplate
+from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_openai import ChatOpenAI
 
 load_dotenv(find_dotenv())
@@ -40,4 +41,33 @@ chat = ChatOpenAI()
 # Wykonanie zapytania do modelu
 response = chat.invoke(formatted_chat_prompt)
 
+print(response.content)
+
+context = """
+The Vercel AI SDK is an open-source library designed to help developers build conversational, streaming, and chat user interfaces in JavaScript and TypeScript. The SDK supports React/Next.js, Svelte/SvelteKit, with support for Nuxt/Vue coming soon.
+To install the SDK, enter the following command in your terminal:
+npm install ai
+"""
+role = "Senior JavaScript Programmer"
+
+system_message = f"""
+As a {role} who answers the questions ultra-concisely using CONTEXT below 
+and nothing more and truthfully says "don't know" when the CONTEXT is not enough to give an answer.
+
+context###{context}###
+"""
+
+# Generuj wiadomosc czlowieka
+human_message = "What is Vercel AI?"
+
+# odpowiedź
+chat = ChatOpenAI()
+response = chat.invoke(
+    [
+        SystemMessage(system_message),
+        HumanMessage(human_message),
+    ]
+)
+
+# Wyświetlenie odpowiedzi
 print(response.content)
