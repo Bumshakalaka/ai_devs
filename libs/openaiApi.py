@@ -1,7 +1,9 @@
+import os
+
 import requests
 import logging
 
-from env import OPENAI_API_KEY
+from dotenv import load_dotenv, find_dotenv
 from requests.auth import AuthBase
 
 logger = logging.getLogger(__name__)
@@ -22,7 +24,7 @@ class TokenAuth(AuthBase):
 class OpenApi:
     def __init__(self):
         self._base_url = "https://api.openai.com/v1"
-        self.api_key = OPENAI_API_KEY
+        self.api_key = os.environ["OPENAI_API_KEY"]
 
     def moderations(self, input):
         url = f"{self._base_url}/moderations"
@@ -34,6 +36,7 @@ class OpenApi:
 
 
 if __name__ == "__main__":
+    load_dotenv(find_dotenv())
     loggerFormat = "%(asctime)s:\t%(message)s"
     loggerFormatter = logging.Formatter(loggerFormat)
     loggerLevel = logging.DEBUG
